@@ -14,7 +14,10 @@ installtools()
 {
 	mkdir tools
 	echo "Downloading imgRePackerRK"
-	wget "https://forum.xda-developers.com/attachment.php?s=88d36c74a3312bcbe8953bafcab49241&attachmentid=4136650&d=1493819013" -O imgRePackerRK.zip
+	wget "https://forum.xda-developers.com/attachment.php?attachmentid=4136650&d=1493819013" -O tools/imgRePackerRK.zip
+	unzip tools/imgRePackerRK.zip -d tools/
+	rm tools/imgRePackerRK.zip
+	chmod a+x tools/imgrepackerrk
 }
 
 while [ "$1" != "" ]; do
