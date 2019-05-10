@@ -13,8 +13,9 @@ To build a custom ROM run ./makerom.sh from a linux (ubuntu) bash shell. Suggest
 
 On ubuntu:
 
+```
 sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
 sudo apt-get install wget attr e2fsprogs
-
+```
