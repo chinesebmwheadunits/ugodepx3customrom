@@ -7,3 +7,13 @@ To build a custom ROM run ./makerom.sh from a linux (ubuntu) bash shell. Suggest
 ## Requirements
 
 * 32-bit runtime on a 64 bit system.
+* wget
+* extended attributes support (xattr).
+
+On ubuntu:
+
+sudo dpkg --add-architecture i386
+sudo apt-get update
+sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
+sudo apt-get install wget attr
+
