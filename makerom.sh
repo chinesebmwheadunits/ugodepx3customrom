@@ -5,6 +5,7 @@ builddir="build"
 toolsdir="tools"
 mountdir="$builddir/mnt"
 supersudir="supersu"
+haystackdir="haystack"
 
 usage()
 {
@@ -178,6 +179,35 @@ installsupersu()
 	fi
 }
 
+installhaystack()
+{
+	mkdir $haystackdir/work/
+	cp $mountdir/framework/core-libart.jar $haystackdir/work/
+	cp $mountdir/framework/core-oj.jar $haystackdir/work/
+	cp $mountdir/framework/ext.jar $haystackdir/work/
+	cp $mountdir/framework/framework.jar $haystackdir/work/
+	cp $mountdir/framework/services.jar $haystackdir/work/
+	cp $mountdir/priv-app/Settings/Settings.apk $haystackdir/work/
+	cd $haystackdir/
+	if ! ./patch-fileset patches/sigspoof-hook-7.0-9.0/ 27 work/; then
+		return 1
+	fi
+	if ! ./patch-fileset patches/sigspoof-core/ 27 work__sigspoof-hook-7.0-9.0/; then
+		return 1
+	fi
+	if ! ./patch-fileset patches/sigspoof-ui-global-7.0-7.1/ 27 work__sigspoof-hook-7.0-9.0__sigspoof-core/; then
+		return 1
+	fi
+	#could be aliased to cp -i
+	cd $1
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/core-libart.jar $mountdir/framework/core-libart.jar
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/core-oj.jar $mountdir/framework/core-oj.jar
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/ext.jar $mountdir/framework/ext.jar
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/framework.jar $mountdir/framework/framework.jar
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/services.jar $mountdir/framework/services.jar
+	yes | cp $haystackdir/work__sigspoof-hook-7.0-9.0__sigspoof-core__sigspoof-ui-global-7.0-7.1/Settings.apk $mountdir/priv-app/Settings/Settings.apk 
+}
+
 repack()
 {
 	$toolsdir/imgrepackerrk $builddir/px3.img.dump
@@ -187,6 +217,11 @@ repack()
 	fi
 	builtimagefile=`realpath $builddir/px3.img`
 	echo "Done packing. The resulting image file is $builtimagefile"
+}
+
+clonehaystack()
+{
+	git clone https://github.com/Lanchon/haystack.git $haystackdir
 }
 
 while [ "$1" != "" ]; do
@@ -219,6 +254,11 @@ if !hash wget 2>/dev/null; then
 	exit 1
 fi
 
+if !hash git 2>/dev/null; then
+	echo "Please install git"
+	exit 1
+fi
+
 if !hash resize2fs 2>/dev/null; then
 	echo "Please install e2fsprogs (resize2fs)"
 	exit 1
@@ -226,7 +266,7 @@ fi
 
 if !hash setfattr 2>/dev/null; then
 	echo "Please install attr (setfattr)"
-	exit 1
+	exit 1installhaystack
 fi
 
 cd `dirname "$0"`
@@ -242,6 +282,13 @@ fi
 if [ ! -d "$supersudir" ]; then
 	if ! downloadsupersu; then
 		rm -rf "$supersudir"
+		exit 1
+	fi
+fi
+
+if [ ! -d "$haystackdir" ]; then
+	if ! clonehaystack; then
+		rm -rf "$haystackdir"
 		exit 1
 	fi
 fi
@@ -269,10 +316,22 @@ if ! installsupersu; then
 	rm -rf "$builddir/px3.img.dump"
 	exit 1
 fi
+
+if ! installhaystack $workingdir; then
+	unmountsystemimage $workingdir
+	cd $workingdir
+	rm -rf $haystackdir/work*
+	exit 1
+else
+	cd $workingdir
+	rm -rf $haystackdir/work*
+fi
+
 if ! unmountsystemimage $workingdir; then
 	echo "Please unmount $mountdir manually"
 	exit 1
 fi
+
 if ! repack; then
 	rm -rf "$builddir/px3.img.dump"
 	exit 1
