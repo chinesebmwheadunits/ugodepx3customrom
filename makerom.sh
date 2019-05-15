@@ -266,7 +266,7 @@ fi
 
 if !hash setfattr 2>/dev/null; then
 	echo "Please install attr (setfattr)"
-	exit 1installhaystack
+	exit 1
 fi
 
 cd `dirname "$0"`
