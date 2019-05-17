@@ -189,13 +189,13 @@ installhaystack()
 	cp $mountdir/framework/services.jar $haystackdir/work/
 	cp $mountdir/priv-app/Settings/Settings.apk $haystackdir/work/
 	cd $haystackdir/
-	if ! ./patch-fileset patches/sigspoof-hook-7.0-9.0/ 27 work/; then
+	if ! ./patch-fileset patches/sigspoof-hook-7.0-9.0/ 25 work/; then
 		return 1
 	fi
-	if ! ./patch-fileset patches/sigspoof-core/ 27 work__sigspoof-hook-7.0-9.0/; then
+	if ! ./patch-fileset patches/sigspoof-core/ 25 work__sigspoof-hook-7.0-9.0/; then
 		return 1
 	fi
-	if ! ./patch-fileset patches/sigspoof-ui-global-7.0-7.1/ 27 work__sigspoof-hook-7.0-9.0__sigspoof-core/; then
+	if ! ./patch-fileset patches/sigspoof-ui-global-7.0-7.1/ 25 work__sigspoof-hook-7.0-9.0__sigspoof-core/; then
 		return 1
 	fi
 	#could be aliased to cp -i
