@@ -20,3 +20,7 @@ sudo apt-get update
 sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
 sudo apt-get install wget attr e2fsprogs git
 ```
+
+Binary download:
+
+https://1drv.ms/u/s!Ap4Tvs3SpQ_NoiQMRGnhhqSs_n8l
