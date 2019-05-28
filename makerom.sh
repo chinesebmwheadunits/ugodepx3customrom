@@ -162,8 +162,8 @@ installsupersu()
 	if ! setperm 0 2000 0755 $mountdir/bin/app_process_init "u:object_r:system_file:s0"; then
 		return 1
 	fi
-	mv $mountdir/bin/app_process32 $mountdir/bin/app_process_original
-	if ! setperm 0 2000 0755 $mountdir/bin/app_process_original "u:object_r:zygote_exec:s0"; then
+	mv $mountdir/bin/app_process32 $mountdir/bin/app_process32_original
+	if ! setperm 0 2000 0755 $mountdir/bin/app_process32_original "u:object_r:zygote_exec:s0"; then
 		return 1
 	fi
 	rm $mountdir/bin/app_process
